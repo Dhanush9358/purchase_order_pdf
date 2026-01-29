@@ -3,7 +3,7 @@ from weasyprint import HTML
 from io import BytesIO
 
 from app.services.calculator import calculate_totals
-from app.services.number_to_words import num_to_words
+from app.services.number_to_words import amount_to_words
 from app.services.order_no import generate_order_no
 from app.utils.date_utils import today_ddmmyyyy, parse_date
 
@@ -27,8 +27,8 @@ def generate_po_pdf(data):  # ✅ data exists ONLY here
         ship_to=data.ship_to,
         items=data.items,
         totals=totals,
-        total_words=num_to_words(int(totals["grand_total"])) + " Only",
-        gst_words=num_to_words(int(totals["total_gst"])) + " Only",
+        total_words = amount_to_words(totals["grand_total"]),
+        gst_words = amount_to_words(totals["total_gst"])
     )
 
     pdf_io = BytesIO()
