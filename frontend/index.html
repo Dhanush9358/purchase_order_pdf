@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Generate Purchase Order</h2>
+
+<button onclick="generate()">Generate PDF</button>
+
+<script>
+function generate() {
+    fetch("/api/generate-po", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            delivery_date: "06/10/2025",
+            bill_from: {
+                name: "JCS GLOBAL PRIVATE LIMITED",
+                address: "Vijayawada",
+                state: "Andhra Pradesh",
+                gstin: "37AAGCJ1592F1ZH"
+            },
+            bill_to: {
+                name: "OM COMMUNICATION",
+                address: "Ahmedabad",
+                state: "Gujarat"
+            },
+            ship_to: {
+                name: "OM COMMUNICATION WAREHOUSE",
+                address: "Ahmedabad",
+                state: "Gujarat"
+            },
+            items: [
+                {name:"Macbook", hsn:"84713010", qty:10, rate:80850, igst:18}
+            ]
+        })
+    })
+    .then(res => res.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        window.open(url);
+    });
+}
+</script>
+</body>
+</html>
