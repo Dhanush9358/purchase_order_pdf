@@ -1,44 +1,171 @@
 <!DOCTYPE html>
-<html>
-<body>
-<h2>Generate Purchase Order</h2>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Purchase Order Generator</title>
 
-<button onclick="generate()">Generate PDF</button>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #000;
+      padding: 6px;
+      text-align: center;
+    }
+
+    button {
+      padding: 8px 14px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .section {
+      border: 1px solid #000;
+      padding: 10px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>Generate Purchase Order PDF</h2>
+
+<div class="section">
+  <label>Delivery Date</label>
+  <input type="date" id="delivery_date">
+</div>
+
+<div class="section">
+  <h3>Bill From</h3>
+  <input id="bf_name" placeholder="Company Name">
+  <textarea id="bf_address" placeholder="Address"></textarea>
+  <input id="bf_state" placeholder="State">
+  <input id="bf_gstin" placeholder="GSTIN">
+</div>
+
+<div class="section">
+  <h3>Bill To</h3>
+  <input id="bt_name" placeholder="Company Name">
+  <textarea id="bt_address" placeholder="Address"></textarea>
+  <input id="bt_state" placeholder="State">
+</div>
+
+<div class="section">
+  <h3>Ship To</h3>
+  <input id="st_name" placeholder="Company Name">
+  <textarea id="st_address" placeholder="Address"></textarea>
+  <input id="st_state" placeholder="State">
+</div>
+
+<div class="section">
+  <h3>Products</h3>
+
+  <table id="itemsTable">
+    <thead>
+      <tr>
+        <th>Product Name</th>
+        <th>HSN</th>
+        <th>Qty</th>
+        <th>Rate</th>
+        <th>IGST %</th>
+        <th>Remove</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <button onclick="addRow()">+ Add Product</button>
+</div>
+
+<button onclick="generatePDF()">Download PDF</button>
 
 <script>
-function generate() {
-    fetch("/api/generate-po", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            delivery_date: "06/10/2025",
-            bill_from: {
-                name: "JCS GLOBAL PRIVATE LIMITED",
-                address: "Vijayawada",
-                state: "Andhra Pradesh",
-                gstin: "37AAGCJ1592F1ZH"
-            },
-            bill_to: {
-                name: "OM COMMUNICATION",
-                address: "Ahmedabad",
-                state: "Gujarat"
-            },
-            ship_to: {
-                name: "OM COMMUNICATION WAREHOUSE",
-                address: "Ahmedabad",
-                state: "Gujarat"
-            },
-            items: [
-                {name:"Macbook", hsn:"84713010", qty:10, rate:80850, igst:18}
-            ]
-        })
-    })
-    .then(res => res.blob())
-    .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        window.open(url);
+function addRow() {
+  const row = `
+    <tr>
+      <td><input></td>
+      <td><input></td>
+      <td><input type="number"></td>
+      <td><input type="number"></td>
+      <td><input type="number" value="18"></td>
+      <td><button onclick="this.parentElement.parentElement.remove()">X</button></td>
+    </tr>
+  `;
+  document.querySelector("#itemsTable tbody").insertAdjacentHTML("beforeend", row);
+}
+
+addRow(); // add first row automatically
+
+function generatePDF() {
+  const rows = document.querySelectorAll("#itemsTable tbody tr");
+  const items = [];
+
+  rows.forEach(r => {
+    const cells = r.querySelectorAll("input");
+    items.push({
+      name: cells[0].value,
+      hsn: cells[1].value,
+      qty: Number(cells[2].value),
+      rate: Number(cells[3].value),
+      igst: Number(cells[4].value)
     });
+  });
+
+  const payload = {
+    delivery_date: document.getElementById("delivery_date").value,
+    bill_from: {
+      name: document.getElementById("bf_name").value,
+      address: document.getElementById("bf_address").value,
+      state: document.getElementById("bf_state").value,
+      gstin: document.getElementById("bf_gstin").value
+    },
+    bill_to: {
+      name: document.getElementById("bt_name").value,
+      address: document.getElementById("bt_address").value,
+      state: document.getElementById("bt_state").value
+    },
+    ship_to: {
+      name: document.getElementById("st_name").value,
+      address: document.getElementById("st_address").value,
+      state: document.getElementById("st_state").value
+    },
+    items: items
+  };
+
+  fetch("/api/generate-po", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.blob())
+  .then(blob => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "purchase_order.pdf";
+    a.click();
+  });
 }
 </script>
+
 </body>
 </html>
