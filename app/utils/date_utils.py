@@ -16,9 +16,11 @@ def financial_year(date: datetime | None = None) -> str:
     return f"{year}-{str(year+1)[-2:]}"
 
 
-def parse_date(date_str: str) -> str:
-    """
-    Convert ISO date (YYYY-MM-DD) to DD/MM/YYYY
-    Useful when frontend sends <input type="date">
-    """
-    return datetime.strptime(date_str, "%Y-%m-%d").strftime("%d/%m/%Y")
+def parse_date(date_str: str | None):
+    if not date_str:
+        return datetime.now().strftime("%d/%m/%Y")
+
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d").strftime("%d/%m/%Y")
+    except ValueError:
+        return datetime.now().strftime("%d/%m/%Y")

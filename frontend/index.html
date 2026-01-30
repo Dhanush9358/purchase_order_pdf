@@ -122,6 +122,9 @@ function generatePDF() {
 
   rows.forEach(r => {
     const cells = r.querySelectorAll("input");
+
+    if (!cells[0].value) return; // ❗ skip empty rows
+
     items.push({
       name: cells[0].value,
       hsn: cells[1].value,
@@ -157,13 +160,17 @@ function generatePDF() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   })
-  .then(res => res.blob())
+  .then(res => {
+    if (!res.ok) throw new Error("PDF generation failed");
+    return res.blob();
+  })
   .then(blob => {
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "purchase_order.pdf";
     a.click();
-  });
+  })
+  .catch(err => alert(err.message));
 }
 </script>
 

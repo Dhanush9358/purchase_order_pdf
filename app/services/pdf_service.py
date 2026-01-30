@@ -8,7 +8,7 @@ from app.services.order_no import generate_order_no
 from app.utils.date_utils import today_ddmmyyyy, parse_date
 
 
-def generate_po_pdf(data):  # ✅ data exists ONLY here
+def generate_po_pdf(data):
     env = Environment(loader=FileSystemLoader("app/templates"))
     template = env.get_template("purchase_order.html")
 
@@ -18,6 +18,9 @@ def generate_po_pdf(data):  # ✅ data exists ONLY here
 
     totals = calculate_totals(data.items)
 
+    if not totals["items"]:
+        raise ValueError("No items provided")
+
     html_content = template.render(
         order_no=order_no,
         date=date_today,
@@ -25,14 +28,15 @@ def generate_po_pdf(data):  # ✅ data exists ONLY here
         bill_from=data.bill_from,
         bill_to=data.bill_to,
         ship_to=data.ship_to,
-        items=totals["items"],   # ✅ computed items
+        items=totals["items"],
         totals=totals,
         total_words=amount_to_words(totals["grand_total"]),
         gst_words=amount_to_words(totals["total_gst"]),
     )
 
     pdf_io = BytesIO()
-    HTML(string=html_content, base_url=".").write_pdf(pdf_io)
+    HTML(string=html_content, base_url="app").write_pdf(pdf_io)
     pdf_io.seek(0)
 
     return pdf_io
+
