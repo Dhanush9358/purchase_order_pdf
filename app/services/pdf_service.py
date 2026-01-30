@@ -25,10 +25,10 @@ def generate_po_pdf(data):  # ✅ data exists ONLY here
         bill_from=data.bill_from,
         bill_to=data.bill_to,
         ship_to=data.ship_to,
-        items=data.items,
+        items=totals["items"],   # ✅ computed items
         totals=totals,
-        total_words = amount_to_words(totals["grand_total"]),
-        gst_words = amount_to_words(totals["total_gst"])
+        total_words=amount_to_words(totals["grand_total"]),
+        gst_words=amount_to_words(totals["total_gst"]),
     )
 
     pdf_io = BytesIO()

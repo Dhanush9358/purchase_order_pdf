@@ -71,72 +71,8 @@
       text-align: center;
     }
 
-    .no-border {
-      border: none;
-    }
-
-    .right {
-      text-align: right;
-    }
-
-    .center {
-      text-align: center;
-    }
-
-    .bold {
-      font-weight: bold;
-    }
-
-    .totals td {
-      font-weight: bold;
-    }
-
-    .terms {
-      font-size: 11px;
-      margin-top: 10px;
-    }
-
-    .signature {
-      margin-top: 30px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .signature-box {
-      text-align: center;
-      width: 200px;
-    }
-    .address-box {
-      border: 1px solid #000;
-      margin-top: 10px;
-    }
-
-    .address-row {
-      display: flex;
-    }
-
-    .address-col {
-      width: 50%;
-      padding: 6px;
-      border-right: 1px solid #000;
-    }
-
-    .address-col:last-child {
-      border-right: none;
-    }
-
-    .address-title {
-      font-weight: bold;
-      text-align: center;
-      border-bottom: 1px solid #000;
-      margin-bottom: 6px;
-      padding-bottom: 4px;
-    }
-
-    .ship-row {
-      border-top: 1px solid #000;
-      padding: 6px;
-    }
+    .right { text-align: right; }
+    .center { text-align: center; }
 
     .address-grid {
       display: grid;
@@ -146,31 +82,27 @@
       margin-top: 10px;
     }
 
-    /* Bill From – left side (spans 2 rows) */
     .bill-from {
       grid-row: span 2;
       border-right: 1px solid #000;
       padding: 6px;
     }
 
-    /* Bill To – top right */
     .bill-to {
       border-bottom: 1px solid #000;
       padding: 6px;
     }
 
-    /* Ship To – bottom right */
     .ship-to {
       padding: 6px;
     }
 
-    /* Title styling */
     .address-title {
       font-weight: bold;
       text-align: center;
       border: 1px solid #000;
       padding: 4px 0;
-      margin: -6px -6px 6px -6px; /* stretches to full box width */
+      margin: -6px -6px 6px -6px;
       background: #fff;
     }
 
@@ -218,71 +150,41 @@
       font-size: 14px;
     }
 
-    /* ============================= */
-    /* TERMS + SIGNATURE (SINGLE BOX) */
-    /* ============================= */
-
     .terms-signature-single {
-    position: relative;
-    border: 1px solid #000;
-    margin-top: 10px;
-    font-size: 11px;
-    padding: 8px;
-    min-height: 320px; /* space for signature */
+      position: relative;
+      border: 1px solid #000;
+      margin-top: 10px;
+      font-size: 11px;
+      padding: 8px;
+      min-height: 320px;
     }
 
-
-    /* LEFT SIDE – continuous text, no boxes */
     .terms-text {
-    padding-right: 180px; /* leave space ONLY at bottom for signature */
+      padding-right: 180px;
     }
 
     .terms-text ol {
-    margin: 6px 0 0 18px;
-    padding: 0;
+      margin: 6px 0 0 18px;
+      padding: 0;
     }
 
     .terms-text li {
-    margin-bottom: 4px;
+      margin-bottom: 4px;
     }
 
-    /* footer line inside same box */
-    .terms-footer {
-      /* border-top: 1px solid #000; */
-      margin-top: 8px;
-      padding-top: 6px;
-      font-size: 10.5px;
-    }
-
-    /* RIGHT SIDE – signature fixed to bottom */
     .terms-signature {
-    position: absolute;
-    bottom: 12px;
-    right: 12px;
-    text-align: center;
-    width: 160px;
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      text-align: center;
+      width: 160px;
     }
-
 
     .terms-signature img {
       max-width: 130px;
       max-height: 90px;
       object-fit: contain;
       margin-bottom: 6px;
-    }
-
-    /* PRINT */
-    @media print {
-      body {
-        margin: 0;
-      }
-    }
-
-
-    @media print {
-      body {
-        margin: 0;
-      }
     }
   </style>
 </head>
@@ -293,9 +195,8 @@
   <!-- HEADER -->
   <div class="row">
     <div class="logo">
-      <img src="logo.png" alt="OM Communication Logo">
+      <img src="logo.png">
     </div>
-
     <div class="company-details">
       <div class="company-name">OM COMMUNICATION</div>
       B-3 Neelam Park, Anand Bunglow,<br>
@@ -310,137 +211,79 @@
   <!-- ORDER INFO -->
   <table>
     <tr>
-      <td><strong>Delivery Date:</strong> 06/10/2025</td>
-      <td><strong>Order No:</strong> OMC-PO-272/25-26</td>
-      <td><strong>Date:</strong> 06/10/2025</td>
+      <td><strong>Delivery Date:</strong> {{ delivery_date }}</td>
+      <td><strong>Order No:</strong> {{ order_no }}</td>
+      <td><strong>Date:</strong> {{ date }}</td>
       <td><strong>Original</strong></td>
     </tr>
   </table>
 
+  <!-- ADDRESSES -->
   <div class="address-grid">
-
     <div class="bill-from">
       <div class="address-title">Bill From</div>
-      <strong>JCS GLOBAL PRIVATE LIMITED</strong><br>
-      Door No. 76-16-53, Vijayawada Municipal,<br>
-      Urmila Nagar, Revenue Ward 29A, Kamakoti<br>
-      NTR - 520012<br>
-      State : Andhra Pradesh<br>
-      GSTIN No. : 37AAGCJ1592F1ZH
+      <strong>{{ bill_from.name }}</strong><br>
+      {{ bill_from.address | replace('\n', '<br>') | safe }}<br>
+      State : {{ bill_from.state }}<br>
+      GSTIN : {{ bill_from.gstin }}
     </div>
 
     <div class="bill-to">
       <div class="address-title">Bill To</div>
-      <strong>OM COMMUNICATION</strong><br>
-      B-3 Neelam Park, Anand Bunglow,<br>
-      Opp. Titanium City Center Satellite,<br>
-      AHMEDABAD - 380015<br>
-      State : Gujarat &nbsp;&nbsp; Mo :
+      <strong>{{ bill_to.name }}</strong><br>
+      {{ bill_to.address | replace('\n', '<br>') | safe }}<br>
+      State : {{ bill_to.state }}
     </div>
 
     <div class="ship-to">
       <div class="address-title">Ship To</div>
-      <strong>OM COMMUNICATION (WARE HOUSE)</strong><br>
-      Block-C, GF/28, Sumel-11, Indian Textile Plaza,<br>
-      Nr. Namste Circle, Shahibaug,<br>
-      AHMEDABAD - 380004<br>
-      State : Gujarat &nbsp;&nbsp; Mo :
+      <strong>{{ ship_to.name }}</strong><br>
+      {{ ship_to.address | replace('\n', '<br>') | safe }}<br>
+      State : {{ ship_to.state }}
     </div>
-
   </div>
 
-
-  <!-- ITEMS TABLE -->
+  <!-- ITEMS -->
   <table>
     <tr>
-      <th>Sr No</th>
-      <th>Product Name</th>
-      <th>HSN/SAC</th>
+      <th>Sr</th>
+      <th>Product</th>
+      <th>HSN</th>
       <th>Qty</th>
       <th>Rate</th>
       <th>IGST %</th>
       <th>Amount</th>
     </tr>
 
+    {% for item in items %}
     <tr>
-      <td class="center">1</td>
-      <td>APPLE MACBOOK MC6T4HN/A<br>New – non Activated – original Sealed</td>
-      <td class="center">84713010</td>
-      <td class="center">10</td>
-      <td class="right">80850.00</td>
-      <td class="center">18.00</td>
-      <td class="right">685169.50</td>
+      <td class="center">{{ loop.index }}</td>
+      <td>{{ item.name }}</td>
+      <td class="center">{{ item.hsn }}</td>
+      <td class="center">{{ item.qty }}</td>
+      <td class="right">{{ "%.2f"|format(item.rate) }}</td>
+      <td class="center">{{ item.igst }}</td>
+      <td class="right">{{ "%.2f"|format(item.amount) }}</td>
     </tr>
-
-    <tr>
-      <td class="center">2</td>
-      <td>APPLE MACBOOK MW123HN/A<br>New – non Activated – original Sealed</td>
-      <td class="center">84713010</td>
-      <td class="center">10</td>
-      <td class="right">80850.00</td>
-      <td class="center">18.00</td>
-      <td class="right">685169.50</td>
-    </tr>
+    {% endfor %}
   </table>
 
+  <!-- TOTALS -->
   <div class="total-grid">
-
-    <!-- LEFT SIDE -->
     <div class="total-left">
-
-      <div class="total-box">
-        <strong>GSTIN No. :</strong> 24APMPK2402F1ZC
-      </div>
-
-      <div class="total-box">
-        <strong>Total GST :</strong>
-        Two Lakh Forty Six Thousand Six Hundred Sixty One And Two Paise Only
-      </div>
-
-      <div class="total-box">
-        <strong>Bill Amount :</strong>
-        Sixteen Lakh Seventeen Thousand Only
-      </div>
-
-      <div class="total-box">
-        <strong>Note :</strong>
-      </div>
-
+      <div class="total-box"><strong>Total GST :</strong> {{ gst_words }}</div>
+      <div class="total-box"><strong>Bill Amount :</strong> {{ total_words }}</div>
+      <div class="total-box"><strong>Note :</strong></div>
     </div>
 
-
-    <!-- RIGHT SIDE -->
     <div class="total-right">
-
-      <div class="total-row">
-        <span>Total</span>
-        <span>20.000</span>
-      </div>
-
-      <div class="total-row">
-        <span>Sub Total</span>
-        <span>13,70,339.00</span>
-      </div>
-
-      <div class="total-row">
-        <span>Taxable</span>
-        <span>13,70,339.00</span>
-      </div>
-
-      <div class="total-row">
-        <span>IGST 18.00%</span>
-        <span>2,46,661.02</span>
-      </div>
-
-      <div class="grand-total">
-        <span>Grand Total</span>
-        <span>16,17,000.00</span>
-      </div>
-
+      <div class="total-row"><span>Total Qty</span><span>{{ totals.total_qty }}</span></div>
+      <div class="total-row"><span>Sub Total</span><span>{{ "%.2f"|format(totals.sub_total) }}</span></div>
+      <div class="total-row"><span>IGST</span><span>{{ "%.2f"|format(totals.total_gst) }}</span></div>
+      <div class="grand-total"><span>Grand Total</span><span>{{ "%.2f"|format(totals.grand_total) }}</span></div>
     </div>
-
   </div>
-
+  
   <div class="terms-signature-single">
 
     <!-- LEFT : TERMS -->
